@@ -1,21 +1,21 @@
 <script>
-    //fungsi login
-    function login(event){
-        //fungsi agar bisa tekan enter saat login
-        document.getElementById("username").addEventListener("keypress", function (event) {
+    //fungsi agar bisa tekan enter saat login
+    document.getElementById("username").addEventListener("keypress", function (event) {
             if(event.key === "Enter") {
                 event.preventDefault();
-                
+                login(event);
             }
         });
 
         document.getElementById("password").addEventListener("keypress", function (event) {
             if(event.key === "Enter") {
                 event.preventDefault();
-
+                login(event);
             }
         });
 
+    //fungsi login
+    function login(event){
         //inisialisasi
         event.preventDefault();
         
@@ -44,7 +44,7 @@
         if(isValid){
             $.ajax({
                 //mengarahkan ke backend
-                url: "function/authorize_login.php",
+                url: "function/login.php",
                 method: "POST",
                 data: {
                     //data yang akan di post
