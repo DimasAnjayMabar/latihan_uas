@@ -1,12 +1,37 @@
+<?php
+    require('includes/connection.php');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id-resi'])) {
+        $idResi = filter_input(INPUT_POST, 'id-resi', FILTER_SANITIZE_NUMBER_INT);
+        if($idResi){
+            $query = "select * from transaksi where id_transaksi = ?";
+            $stmt = $conn -> prepare($query);
+            $stmt -> execute([$idResi]);
+            $resi = $stmt -> fetch(PDO::FETCH_ASSOC);
+        }
+    }
+?>
+
+<?php
+// require('includes/connection.php');
+
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id-resi'])) {
+//     // Sanitize input
+//     $idResi = filter_input(INPUT_POST, 'id-resi', FILTER_SANITIZE_NUMBER_INT);
+
+//     if ($idResi) {
+//         $query = "SELECT * FROM transaksi WHERE id_transaksi = ?";
+//         $stmt = $conn->prepare($query);
+//         $stmt->execute([$idResi]);
+//         $resi = $stmt->fetch(PDO::FETCH_ASSOC);
+//     }
+// }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <?php
-        require('includes/connection.php');
-        $query = "select * from transaksi";
-        $stmt = $conn -> prepare($query);
-        $stmt -> execute();
-        $resi = $stmt -> fetchAll(PDO::FETCH_ASSOC);
         require('includes/head.php');
         session_start();
     ?>
@@ -33,6 +58,7 @@
 
     <nav class="container" style="margin-top: 15%;">
         <nav class="container-fluid" style="background-color: black; text-align: center;">
+            <h1 style="color: white; margin-top: 2%;" class="">RESI : <?php echo $resi['nomor_resi']?></h1>
             <form id="submit-resi" method="POST" action="function/add_resi.php" enctype="multipart/form-data">
                 <!-- <div class="mb-3">
                     <label for="username" class="form-label" style="color: white; margin-top: 2%;">Tanggal</label>
@@ -65,24 +91,37 @@
                         foreach($resi as $row){
                             $noResi = $row['nomor_resi'];
                             $tanggal = $row['tanggal_resi'];
-                            $idResi = $row['id_transaksi'];
 
                             echo '
-                                    <tr>
-                                        <td>' . $tanggal . '</td>
-                                        <td>' . $noResi . '</td>
-                                        <td>
-                                            <form action="add_entry_log.php" method="POST">
-                                                <input type="hidden" name="id-resi" value="' . $idResi . '">
-                                                <button type="submit" class="btn btn-primary" style="margin-bottom: 2%;">Entry Log</button>
-                                            </form>
-                                            <button type="button" class="btn btn-danger" data-id="' . $idResi . '" data-bs-toggle="modal" data-bs-target="#confirmationModal">Hapus</button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>' . $tanggal . '</td>
+                                    <td>' . $noResi . '</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" style="margin-bottom: 2%;" data-bs-target="#confirmationModal" data-bs-toggle="modal">Entry Log</button>
+                                        <button type="button" class="btn btn-danger" style="margin-bottom: 2%;" data-bs-target="#confirmationModal" data-bs-toggle="modal">Hapus</button>
+                                    </td>
+                                </tr>
                             ';
                         }
                     }
                 ?>
+                <!-- <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                </tr> -->
             </tbody>
         </table>
     </div>
@@ -103,28 +142,6 @@
         </div>
         </div>
     </div>
-    </div>
-    <!-- Modal End -->
-
-    <!-- Modal Start -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel" style="color: #522e38 !important;">Konfirmasi Penghapusan Artikel</h5>
-                </div>
-                <div class="modal-body">
-                    Apakah Anda yakin ingin menghapus resi?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-primary rounded-pill custom-button" data-bs-dismiss="modal">Batal</button>
-                    <form id="delete-article-modal-form" action="../functions/delete-article.php" method="POST">
-                        <input type="hidden" name="id" id="modal-article-id">
-                        <button type="submit" class="btn btn-lg btn-danger rounded-pill custom-button">Hapus</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
     <!-- Modal End -->
 
